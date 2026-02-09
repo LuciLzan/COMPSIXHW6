@@ -1,61 +1,46 @@
 import MovieGrid from '../components/MovieGrid';
+import {getPopularMovies} from "../services/movieService.js";
+import {useEffect, useState} from "react";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
+import ErrorMessage from "../components/ErrorMessage.jsx";
 
-// Static movie data for template
-const staticMovies = [
-  {
-    id: 1,
-    title: "The Shawshank Redemption",
-    poster_path: "/placeholder-poster.jpg",
-    vote_average: 9.3,
-    release_date: "1994-09-23"
-  },
-  {
-    id: 2,
-    title: "The Godfather",
-    poster_path: "/placeholder-poster.jpg",
-    vote_average: 9.2,
-    release_date: "1972-03-14"
-  },
-  {
-    id: 3,
-    title: "The Dark Knight",
-    poster_path: "/placeholder-poster.jpg",
-    vote_average: 9.0,
-    release_date: "2008-07-18"
-  },
-  {
-    id: 4,
-    title: "Pulp Fiction",
-    poster_path: "/placeholder-poster.jpg",
-    vote_average: 8.9,
-    release_date: "1994-10-14"
-  },
-  {
-    id: 5,
-    title: "Forrest Gump",
-    poster_path: "/placeholder-poster.jpg",
-    vote_average: 8.8,
-    release_date: "1994-06-23"
-  },
-  {
-    id: 6,
-    title: "Inception",
-    poster_path: "/placeholder-poster.jpg",
-    vote_average: 8.7,
-    release_date: "2010-07-16"
-  }
-];
 
-function Home() {
+function Home({results, favorites,setFavorites}) {
+
+
+    const [movies, setMovies] = useState([]);
+
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        async function load() {
+            if(results && results.length > 0) {
+                setMovies(results)
+            }else {
+                setMovies(await getPopularMovies())
+            }
+        }
+        try {
+            load()
+            setLoading(false)
+        }catch(err) {
+            setError(err)
+        }
+    },[results])
+
+    if(loading) return <LoadingSpinner/>
+    if(error) return <ErrorMessage message={error}/>
+
   return (
     <main className="main-content">
       <div className="content-header">
         <h2>Popular Movies</h2>
         <p>Discover and save your favorite films</p>
       </div>
-      <MovieGrid movies={staticMovies} />
+      <MovieGrid favorites={favorites} setFavorites={setFavorites} movies={movies} />
     </main>
   );
-};
+}
 
 export default Home;

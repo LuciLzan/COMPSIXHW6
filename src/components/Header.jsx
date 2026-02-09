@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
+import {searchMovies} from "../services/movieService.js";
 
-function Header() {
+function Header({setSearchResults}) {
   return (
     <header className="header">
       <div className="header-content">
@@ -10,12 +11,15 @@ function Header() {
           <Link to="/favorites" className="nav-link">Favorites</Link>
         </nav>
         <div className="search-container">
-          <input 
+          <input
+            id="search-button"
             type="text" 
             placeholder="Search movies..."
             className="search-input"
           />
-          <button className="search-button">Search</button>
+          <button onClick={async () => {
+            setSearchResults(await searchMovies(document.getElementById("search-button").value));
+          }} className="search-button">Search</button>
         </div>
       </div>
     </header>

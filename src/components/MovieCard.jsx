@@ -1,9 +1,9 @@
-function MovieCard({ movie }) {
+function MovieCard({ movie,favorites,setFavorites }) {
   return (
     <div className="movie-card">
       <div className="movie-poster">
         <img 
-          src="https://placehold.co/300x450/667eea/ffffff?text=Movie+Poster" 
+          src={"https://image.tmdb.org/t/p/w500"+movie.poster_path}
           alt={movie.title}
         />
       </div>
@@ -13,7 +13,11 @@ function MovieCard({ movie }) {
           <span className="movie-rating">⭐ {movie.vote_average}</span>
           <span className="movie-year">{movie.release_date.substring(0, 4)}</span>
         </div>
-        <button className="favorite-button">♡ Add to Favorites</button>
+          {!favorites.some(favMovie => (favMovie.id === movie.id)) ?
+              <button className="favorite-button" onClick={() => setFavorites([...favorites, movie])}>♡ Add to Favorites</button>:
+              <button className="favorite-button" onClick={() => setFavorites(favorites.filter((favMovie) => favMovie.id !== movie.id))}>Remove from Favorites</button>
+          }
+
       </div>
     </div>
   );
